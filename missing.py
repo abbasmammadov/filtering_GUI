@@ -14,11 +14,22 @@ PATH = '/Users/abbasmammadov/Desktop/filtering_GUI/'
 
 curr_img = 0
 
-img_names = list()
+all_imgs = list()
 with open(PATH + 'totest.txt', 'r') as f:
     lines = f.readlines()
     for line in lines:
-        img_names.append(line.strip())
+        all_imgs.append(line.strip())
+
+processed_imgs = list()
+with open(PATH + 'so_far_processed_images.txt', 'r') as f:
+    lines = f.readlines()
+    for line in lines:
+        processed_imgs.append(line.strip())
+
+img_names = list()
+for img_name in all_imgs:
+    if not img_name in processed_imgs:
+        img_names.append(img_name)
 
 
 info_gt = dict()
@@ -43,6 +54,7 @@ with open(PATH + 'csv_files/pred_labels.csv', 'r') as f:
 
 descriptions_with_names = list()
 
+so_far_processed_images = list()
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -55,6 +67,10 @@ class MainWindow(QMainWindow):
         self.nextButton = QPushButton("Next")
         self.nextButton.setIconSize(btnSize)
         self.nextButton.clicked.connect(self.next)  
+
+        self.saveSoFarResultsButton = QPushButton("Save So Far Results")
+        self.saveSoFarResultsButton.setIconSize(btnSize)
+        self.saveSoFarResultsButton.clicked.connect(self.savesofar)
         
         self.groundTruth = QLabel("Ground Truth")
         self.groundTruth.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -104,7 +120,10 @@ class MainWindow(QMainWindow):
 
         layout_button = QHBoxLayout()
         layout_button.addWidget(self.nextButton)
-        layout_button.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout_button.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout_button.addWidget(self.saveSoFarResultsButton)
+        layout_button.setAlignment(Qt.AlignmentFlag.AlignRight)
+        
 
         layout = QVBoxLayout()
         layout.addLayout(layout_img)
@@ -126,9 +145,9 @@ class MainWindow(QMainWindow):
         
         if curr_img == len(img_names):
             # save descriptions_with_names to csv file
-            with open(PATH + 'csv_files/descriptions_with_names.csv', 'w') as f:
+            with open(PATH + 'csv_files/descriptions_with_names.csv', 'a') as f:
                 writer = csv.writer(f)
-                writer.writerow(['img_name', 'description'])
+                # writer.writerow(['img_name', 'description'])
                 for row in descriptions_with_names:
                     writer.writerow(row)
 
@@ -143,11 +162,26 @@ class MainWindow(QMainWindow):
         self.gt_labels.setText(info_gt[name_of_img])
         self.pred_labels.setText(info_pred[name_of_img])
 
+        if curr_img:
+            global so_far_processed_images
+            so_far_processed_images.append(img_names[curr_img-1])
+
 
         self.description.setText('')
 
         curr_img += 1
 
+    def savesofar(self):
+        global so_far_processed_images
+        with open(PATH + 'so_far_processed_images.txt', 'a') as f:
+            for img in so_far_processed_images:
+                f.write(img + '\n')
+
+        global descriptions_with_names
+        with open(PATH + 'csv_files/descriptions_with_names.csv', 'a') as f:
+            writer = csv.writer(f)
+            for row in descriptions_with_names:
+                writer.writerow(row)
 
 if __name__ == '__main__':
     import sys

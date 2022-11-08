@@ -37,6 +37,8 @@ with open(PATH + 'totest.txt', 'r') as f:
     for line in lines:
         img_names.append(line.strip())
 
+
+# change pred to gt for gt labels
 with open(PATH + 'csv_files/pred_labels.csv', 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['img_name', 'labels'])
