@@ -1,6 +1,9 @@
 
+# main path for filtering GUI
+PATH = '/Users/abbasmammadov/Desktop/filtering_GUI/'
 
 
+# change the names of labelings
 names = ['경전철제3궤조catenary-normal', '도시철도강체bolt-nut-normal', '도시철도강체catenary-normal', '고속철도카테너리catenary-normal', '고속철도카테너리insulator-normal', '도시철도강체safety_pin-normal', '고속철도카테너리clamp-normal', '고속철도카테너리insulator-abnormal', '고속철도카테너리protector-normal', '도시철도강체long_ear-normal', '도시철도강체insulator-normal', '고속철도카테너리hanger-abnormal', '고속철도카테너리hanger-normal', '도시철도강체T-Bar-normal', '경전철제3궤조bolt-nut-normal', '경전철제3궤조insulator-normal']
 
 def labels_to_names(labels_file):
@@ -29,13 +32,13 @@ def labels_to_names(labels_file):
 import csv
 
 img_names = list()
-with open('/Users/abbasmammadov/Desktop/PyQt6-missings/totest.txt', 'r') as f:
+with open(PATH + 'totest.txt', 'r') as f:
     lines = f.readlines()
     for line in lines:
         img_names.append(line.strip())
 
-with open('pred_labels.csv', 'w', newline='') as f:
+with open(PATH + 'csv_files/pred_labels.csv', 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['img_name', 'labels'])
     for i in range(len(img_names)):
-        writer.writerow([img_names[i], labels_to_names(f'/Users/abbasmammadov/Desktop/PyQt6-missings/pred_labels/{img_names[i]}.txt')])
+        writer.writerow([img_names[i], labels_to_names(PATH + f'pred_labels/{img_names[i]}.txt')])
