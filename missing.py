@@ -137,10 +137,16 @@ class MainWindow(QMainWindow):
     def next(self):
         global curr_img
         global descriptions_with_names
+        global so_far_processed_images
+        
         if curr_img:
             name_of_img = img_names[curr_img-1]
             text = self.description.text()
             descriptions_with_names.append([str(name_of_img), str(text)])
+
+        if curr_img:
+            so_far_processed_images.append(img_names[curr_img-1])
+
         
         
         if curr_img == len(img_names):
@@ -150,6 +156,12 @@ class MainWindow(QMainWindow):
                 # writer.writerow(['img_name', 'description'])
                 for row in descriptions_with_names:
                     writer.writerow(row)
+            # save so_far_processed_images to txt file
+            with open(PATH + 'so_far_processed_images.txt', 'a') as f:
+                for img_name in so_far_processed_images:
+                    f.write(img_name + '\n')
+            # close the app
+            sys.exit()
 
         name_of_img = img_names[curr_img]
         self.groundTruth.setPixmap(QPixmap(PATH + 'gt_img/' + name_of_img + '.jpg'))
@@ -161,11 +173,6 @@ class MainWindow(QMainWindow):
 
         self.gt_labels.setText(info_gt[name_of_img])
         self.pred_labels.setText(info_pred[name_of_img])
-
-        if curr_img:
-            global so_far_processed_images
-            so_far_processed_images.append(img_names[curr_img-1])
-
 
         self.description.setText('')
 
@@ -182,6 +189,9 @@ class MainWindow(QMainWindow):
             writer = csv.writer(f)
             for row in descriptions_with_names:
                 writer.writerow(row)
+        
+        #close the GUI and exit
+        sys.exit()
 
 if __name__ == '__main__':
     import sys
